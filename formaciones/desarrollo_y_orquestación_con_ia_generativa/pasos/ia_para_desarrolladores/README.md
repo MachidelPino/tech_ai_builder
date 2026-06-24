@@ -10,8 +10,8 @@ Este curso está orientado al uso de herramientas de Inteligencia Artificial Gen
 * **Formación:** Desarrollo y Orquestación con IA Generativa
 * **Categoría:** IA para Programación
 * **Plataforma:** Alura
-* **Estado:** Pendiente
-* **Certificado:** Pendiente
+* **Estado:** Completado
+* **Certificado:** Obtenido
 
 ## Objetivo del curso
 
@@ -34,11 +34,11 @@ Este curso permite:
 
 | Aula | Tema                                     | Duración estimada | Estado    |
 | ---- | ---------------------------------------- | ----------------: | --------- |
-| 01   | Generación de Código                     |            24 min | Pendiente |
-| 02   | De la demanda al prototipo               |            36 min | Pendiente |
-| 03   | Ejecución de Código                      |            33 min | Pendiente |
-| 04   | Conociendo a Claude y Grok               |            36 min | Pendiente |
-| 05   | Corrección del código y buenas prácticas |            38 min | Pendiente |
+| 01   | Generación de Código                     |            24 min | Completado |
+| 02   | De la demanda al prototipo               |            36 min | Completado |
+| 03   | Ejecución de Código                      |            33 min | Completado |
+| 04   | Conociendo a Claude y Grok               |            36 min | Completado |
+| 05   | Corrección del código y buenas prácticas |            38 min | Completado |
 
 ## Detalle de aulas
 
@@ -133,4 +133,4 @@ certificado/
 
 ## Estado actual
 
-Curso pendiente.
+Curso completado.

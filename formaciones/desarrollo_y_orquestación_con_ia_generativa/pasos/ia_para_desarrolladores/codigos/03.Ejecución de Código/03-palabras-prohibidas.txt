@@ -1,4 +1,0 @@
-carne
-huevo
-leche
-queso

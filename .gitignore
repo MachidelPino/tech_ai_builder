@@ -1,1 +1,29 @@
+# Ambiente Virtual
+.venv-*/
+.venv/
+venv
+
+# Variables de entorno / secretos
+.env
+.env.*
+
+# Permitir ejemplos publicos
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.$py.class
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# VSCode local
+.vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Temp
 temp/

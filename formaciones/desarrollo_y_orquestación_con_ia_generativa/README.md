@@ -42,9 +42,9 @@ Esta formación cuenta con un único paso.
 
 | Curso                                                                                         |      Estado | Certificado |
 | --------------------------------------------------------------------------------------------- | ----------: | ----------- |
-| Inteligencia Artificial: Preparación para el mercado                                          | En progreso | Pendiente   |
-| IA para Desarrolladores: Desarrollando códigos con ChatGPT, Grok, Claude y otras herramientas |   Pendiente | Pendiente   |
-| Gemini y Python: orquestando LLMs con LangChain                                               |   Pendiente | Pendiente   |
+| Inteligencia Artificial: Preparación para el mercado                                          | Completado  | Obtenido    |
+| IA para Desarrolladores: Desarrollando códigos con ChatGPT, Grok, Claude y otras herramientas | Completado  | Obtenido    |
+| Gemini y Python: orquestando LLMs con LangChain                                               | Completado  | Obtenido    |
 
 ## Contenidos principales
 

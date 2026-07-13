@@ -10,8 +10,8 @@ Este curso está orientado a la creación de agentes de IA utilizando **LangChai
 * **Formación:** Ingeniería de Agentes y Automatización con IA
 * **Categoría:** IA para Programación
 * **Plataforma:** Alura
-* **Estado:** Pendiente
-* **Certificado:** Pendiente
+* **Estado:** Completado
+* **Certificado:** Completado
 
 ## Objetivo del curso
 
@@ -34,10 +34,10 @@ Este curso permite:
 
 | Aula | Tema                                           | Duración estimada | Estado    |
 | ---- | ---------------------------------------------- | ----------------: | --------- |
-| 01   | Configurando el LLM                            |            19 min | Pendiente |
-| 02   | Haciendo las primeras búsquedas                |            44 min | Pendiente |
-| 03   | Perfeccionando búsquedas con múltiples agentes |            74 min | Pendiente |
-| 04   | Construyendo una visualización                 |            12 min | Pendiente |
+| 01   | Configurando el LLM                            |            19 min | Completado |
+| 02   | Haciendo las primeras búsquedas                |            44 min | Completado |
+| 03   | Perfeccionando búsquedas con múltiples agentes |            74 min | Completado |
+| 04   | Construyendo una visualización                 |            12 min | Completado |
 
 ## Detalle de aulas
 
@@ -112,4 +112,4 @@ certificado/
 
 ## Estado actual
 
-Curso pendiente.
+Curso finalizado.

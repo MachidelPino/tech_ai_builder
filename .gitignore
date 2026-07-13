@@ -27,3 +27,8 @@ Thumbs.db
 
 # Temp
 temp/
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal

@@ -64,8 +64,8 @@ También se abordan integraciones con herramientas externas, técnicas de web sc
 
 | Curso                                             |    Estado | Certificado |
 | ------------------------------------------------- | --------: | ----------- |
-| Agentes de IA con LangGraph                       | Pendiente | Pendiente   |
-| LangGraph: Orquestación de agentes y multiagentes | Pendiente | Pendiente   |
+| Agentes de IA con LangGraph                       | Completado | Obtenido   |
+| LangGraph: Orquestación de agentes y multiagentes | Completado | Obtenido   |
 
 ## Paso 02 — Crea flujos automatizados e integraciones inteligentes con n8n
 
@@ -86,7 +86,7 @@ También se explora el uso de Inteligencia Artificial dentro de las automatizaci
 
 | Curso                                                         |    Estado | Certificado |
 | ------------------------------------------------------------- | --------: | ----------- |
-| N8N: Crea automatizaciones inteligentes                       | Pendiente | Pendiente   |
+| N8N: Crea automatizaciones inteligentes                       | En curso | Pendiente   |
 | Automatización de Flujos: integrando n8n e IA                 | Pendiente | Pendiente   |
 | n8n para desarrolladores: Construyendo workflows inteligentes | Pendiente | Pendiente   |
 

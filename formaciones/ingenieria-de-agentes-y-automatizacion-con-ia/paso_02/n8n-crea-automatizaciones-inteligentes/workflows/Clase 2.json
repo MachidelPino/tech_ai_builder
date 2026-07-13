@@ -1,0 +1,215 @@
+{
+  "name": "Clase 2",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f313d6f3-f097-41e9-8989-26423b499205",
+      "name": "When chat message received",
+      "webhookId": "fcd8c7de-9e96-4ec8-a29a-897188b9495a"
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.chatInput }}",
+        "options": {
+          "max_results": 5,
+          "time_range": "week",
+          "include_raw_content": true
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "73260400-9843-439e-989d-67513335fd52",
+      "name": "Search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "ck2PEFw2bCFdc2HQ",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "bff33dd1-c74c-4c1f-88d0-495d20b79798",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un agente que hace resumenes de noticias. Te enviare una noticia y quiero que hagas un resumen con los puntos mas importantes. No quiero que hagas ningun comentario adicional, solo devuelve el resumen.\n\nTexto: \n\n {{ $json.raw_content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "875d3085-6cb6-490b-aacd-da1129aafa06",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RVDn3lcSRHuJVur6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content.parts[0].text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "db3f3c5e-9861-43be-b0c3-46fea6f5c68e",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un redactor de post de LinkedIn. Te enviare un texto enorme, que es una combinacion de resumenes de noticias de la ultima semana sobre algun tema.\nCon este texto debes escribir un post para mi LinkedIn personal, con los puntos mas relevantes. Quiero que añadas hashtags al final. No quiero que añadas ningun comentario adicional. Solo devuelve el post para que sea publicado.\n\nTexto:\n\n {{ $json.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "4e0d3764-c621-4898-ae2b-86013c870984",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RVDn3lcSRHuJVur6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5ec4f410-4f3f-426b-a265-32df0f02d98a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "nI19hPvUfc1DBdgE",
+  "tags": []
+}

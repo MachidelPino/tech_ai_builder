@@ -1,0 +1,256 @@
+{
+  "name": "5",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8f39d904-427d-4d0a-a6f5-5ca3a2d7a5ea",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rYdK5dLtXO948vw6",
+          "name": "Microsoft Outlook OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        224
+      ],
+      "id": "05290110-5637-4fac-8406-b891b37758a3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JUGn5WBquNBrhg3o",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Fecha: {{ $now.format('dd/MM/yyyy') }}\nCliente: {{ $json.from }}\nAsunto: {{ $json.subject }}\nMensaje: {{ $json.bodyPreview }}",
+        "options": {
+          "systemMessage": "## Rol\nEres Pablo. Agente de ventas orientado a la atención al cliente para la empresa FlexData. Tu meta es completar la planilla y responde al cliente con un tono amable, amigable y siempre guiándolo con su consulta y motivandolo a finalizar el pedido en caso de que haya solicitado algo.\n\n## Tools\n- Utiliza la herramienta `pedidos` y completa la planilla con los datos correspondientes.\n\n## Respuesta\n- Debes responder en formato HTML usando negritas, colores, emojis de manera estructurada para que se vea agradable visualmente.\n- Si usas colores en los titulos, utiliza teoría del color para agradar visualmente al cliente.\n- Al inicio del mensaje presentate con tu nombre y la empresa de la que eres parte."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c1002ecf-639e-4da2-8835-e5184527df15",
+      "name": "Agente de ventas"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14YXBy5dmm8xAY7vDw4Iv6C20xJ_2LoPpkAfwWcmJrMg",
+          "mode": "list",
+          "cachedResultName": "n8n test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14YXBy5dmm8xAY7vDw4Iv6C20xJ_2LoPpkAfwWcmJrMg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 962113959,
+          "mode": "list",
+          "cachedResultName": "Pedidos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14YXBy5dmm8xAY7vDw4Iv6C20xJ_2LoPpkAfwWcmJrMg/edit#gid=962113959"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Cliente": "={{ $json.from }}",
+            "Asunto": "={{ $json.subject }}",
+            "Mensaje": "={{ $json.bodyPreview }}",
+            "Fecha": "={{ $now.format(\"dd-MM-yyyy\")}}",
+            "Canal": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Canal', `Describe si el mensaje viene de gmail, outlook, linkedin, instagram, whatsapp, etc.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Canal",
+              "displayName": "Canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Asunto",
+              "displayName": "Asunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        224
+      ],
+      "id": "a1cf784c-a927-46a5-962e-7e6f261a9f00",
+      "name": "pedidos",
+      "credentials": {
+        "googleApi": {
+          "id": "IwmB62K3qeiHZPX9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $('Microsoft Outlook Trigger').item.json.from }}",
+        "subject": "={{ $('Microsoft Outlook Trigger').item.json.subject }}",
+        "bodyContent": "={{ $json.output }}",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "3255067f-c948-4ac0-80da-a26122994103",
+      "name": "Send a message",
+      "webhookId": "b540ee14-eb78-4c5d-81f0-bbd72db31047",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rYdK5dLtXO948vw6",
+          "name": "Microsoft Outlook OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Agente de ventas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de ventas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pedidos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de ventas": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "22883e96-f2a3-48ed-ab07-d37d01678820",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "eDhfRmhsLw4XElp3",
+  "tags": []
+}

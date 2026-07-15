@@ -1,0 +1,133 @@
+{
+  "name": "Clase 1",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "247bd880-a945-435c-baab-0ad49b1cc7af",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2sLPJ1kbInpWRh2u",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres asistente y te encargas de resumir correos electronicos extensos en español latinoamericano. Genera hasta 5 puntos clave breves y claros, seguidos de una frase ejecutiva. No incluyas informacion que no este en el correo electronico."
+            },
+            {
+              "content": "={{ $json.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d1835717-73da-4669-8430-0bb1c41a1b38",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JUGn5WBquNBrhg3o",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "emailType": "text",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "c282a34c-04e5-40c7-90eb-e5e77d4fd241",
+      "name": "Reply to a message",
+      "webhookId": "6016647a-6ad0-49bb-8401-80e22074afc0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2sLPJ1kbInpWRh2u",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8a70841c-26f6-4ca2-a53e-fa8791a0e9ae",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "6Qi9nho5FID04vj6",
+  "tags": []
+}

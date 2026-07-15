@@ -1,0 +1,288 @@
+{
+  "name": "Clase 4",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -96
+      ],
+      "id": "4e8af42b-7ec2-4721-8f05-008bf660cc77",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "14YXBy5dmm8xAY7vDw4Iv6C20xJ_2LoPpkAfwWcmJrMg",
+          "mode": "list",
+          "cachedResultName": "n8n test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14YXBy5dmm8xAY7vDw4Iv6C20xJ_2LoPpkAfwWcmJrMg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1299474067,
+          "mode": "list",
+          "cachedResultName": "Feedback",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14YXBy5dmm8xAY7vDw4Iv6C20xJ_2LoPpkAfwWcmJrMg/edit#gid=1299474067"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "42a3be50-b5ce-456c-8316-bcbc9549bceb",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "IwmB62K3qeiHZPX9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53a57622-2f6c-4b2c-a4f1-1cb5d4660226",
+              "name": "output[0].content[0].text",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        -96
+      ],
+      "id": "7b837ef9-66d1-476b-97b1-99b7d0f746a4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=## Rol\nEres un analizador de satisfacción de comentarios de flexData.\nTu meta es analizar el listado de **feedback** y completar la siguiente salida en español de américa latina.\n\n## Salida\nResponde **exclusivamente** en formato JSON válido, con la siguiente estructura:\n{\n \"Cliente\": {{ $json.Cliente }},\n \"Sentimiento\": \"positivo\" | \"negativo\" | \"neutro\",\n \"Resumen\": \"una frase corta\",\n \"Sugerencia\": \"Si Sentimento=negativo, describe una mejora; caso contrario describe que no se necesita una mejora\"\n}\n\n## Importante\n- No incluyas NADA fuera de la estructura JSON indicada en la **Salida**"
+            },
+            {
+              "content": "=Fecha: {{ $json.Fecha }}\nCliente: {{ $json.Cliente }}\nCanal: {{ $json.Canal }}\nFeedback: {{ $json.Feedback }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "f22e8d65-bb3f-49f4-bac2-c17ec7afc3e7",
+      "name": "Analizador de sentimientos",
+      "credentials": {
+        "openAiApi": {
+          "id": "JUGn5WBquNBrhg3o",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5356710b-35d8-465e-b10e-f62b6213bdf9",
+              "leftValue": "={{ $json.output[0].content[0].text }}",
+              "rightValue": "\"Sentimiento\": \"negativo\"",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1024,
+        -96
+      ],
+      "id": "b4ecbbd0-188d-4877-b61a-56568ed54565",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $json.output[0].content[0].text }}"
+            },
+            {
+              "role": "system",
+              "content": "## Rol\nRedactor. Tu meta es redactar la información utilizando negritas y clasificando la información de manera ordenada para una correcta lectura\n\n## Contexto\n- Recibirás una estructura JSON sobre la cual debes trabajar pero sin modificar su contenido semántico\n\n## Salida\nDevuelve la respuesta en formato HTML, usando <b> para títulos y <br> para saltos de línea. No uses Markdown."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        -96
+      ],
+      "id": "8a2fd2c4-b2f7-4f7e-9c72-541c8b7e93f6",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JUGn5WBquNBrhg3o",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "machidelpino@outlook.com",
+        "subject": "Analisis de sentimientos",
+        "bodyContent": "=Feedback analizado:\n\n{{ $json.output[0].content[0].text }}",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        -96
+      ],
+      "id": "23bf9739-ccd2-425e-b07e-e7ff30fd1b28",
+      "name": "Send a message",
+      "webhookId": "2e034bdd-f963-4dbc-8261-eea98756ad71",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rYdK5dLtXO948vw6",
+          "name": "Microsoft Outlook OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Analizador de sentimientos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizador de sentimientos": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "62436111-5f9b-41af-900e-c94c1a119397",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "fHVRlfDmxP5fgRSR",
+  "tags": []
+}

@@ -1,0 +1,94 @@
+{
+  "name": "Clase 1",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "owner": {
+          "__rl": true,
+          "value": "MachidelPino",
+          "mode": "list",
+          "cachedResultName": "MachidelPino",
+          "cachedResultUrl": "https://github.com/MachidelPino"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "study-tracker-cli",
+          "mode": "list",
+          "cachedResultName": "study-tracker-cli",
+          "cachedResultUrl": "https://github.com/MachidelPino/study-tracker-cli"
+        },
+        "events": [
+          "pull_request"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b30583e3-dddf-4272-9315-7e846ca6a45a",
+      "name": "Github Trigger",
+      "webhookId": "4902866a-7b46-46cf-b6f5-32e8cf3af547",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "machidelpino@outlook.com",
+        "subject": "New Pull Request",
+        "message": "=From:  {{ $json.body.pull_request.user.html_url }}\nPull request: {{ $json.body.pull_request.url}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "daceee41-c681-4744-a0b6-1c6f3c65d9ba",
+      "name": "Send a message",
+      "webhookId": "0188cff5-3e63-435e-b96e-a72e68502733",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2sLPJ1kbInpWRh2u",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Github Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d11cf7a0-a8a2-48c9-8c64-235d0c991565",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "5eXi8nKzB5Dhz2kS",
+  "tags": []
+}

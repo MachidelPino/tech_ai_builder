@@ -1,0 +1,315 @@
+{
+  "name": "Clase 2",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "owner": {
+          "__rl": true,
+          "value": "MachidelPino",
+          "mode": "list",
+          "cachedResultName": "MachidelPino",
+          "cachedResultUrl": "https://github.com/MachidelPino"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "study-tracker-cli",
+          "mode": "list",
+          "cachedResultName": "study-tracker-cli",
+          "cachedResultUrl": "https://github.com/MachidelPino/study-tracker-cli"
+        },
+        "events": [
+          "pull_request"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "c1680942-be13-48b5-b069-8aa9be73c6f8",
+      "name": "Github Trigger",
+      "webhookId": "3eb77678-917e-4e62-b430-27c157793bd1",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "machidelpino@outlook.com",
+        "subject": "New Pull Request",
+        "message": "=From:  {{ $json.body.pull_request.user.html_url }}\nPull request: {{ $json.body.pull_request.url}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "0ddffa84-5a46-4917-bcf8-ff8548eb9acb",
+      "name": "Send a message",
+      "webhookId": "e7ccb4f5-043a-4f38-a485-66a8cfceb807",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2sLPJ1kbInpWRh2u",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHN4HCM0C",
+          "mode": "id"
+        },
+        "message": "=PR from:  {{ $('Github Trigger').item.json.body.pull_request.url }}\n\nautor: {{ $('Github Trigger').item.json.body.pull_request.user.login }}\n\nEsta aprobado??",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "5919a598-b38b-4978-a141-2263ddc32346",
+      "name": "Send message and wait for response",
+      "webhookId": "3618d471-97c9-4579-ad8b-ae823383dc0a",
+      "credentials": {
+        "slackApi": {
+          "id": "j1iiKafj1gLCFwJw",
+          "name": "Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "40c186fd-3718-4981-a23b-0fbae63de376",
+              "leftValue": "={{ $json.body.action }}",
+              "rightValue": "opened",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "175fde32-9680-4e0a-bc31-d12a428c8664",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8d149703-7faf-40ef-8e7a-7697c3dc242f",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "23ccfe91-1cd8-441b-af88-b986cfc97e7b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "review",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.user.html_url }}",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.repo.html_url }}",
+          "mode": "url"
+        },
+        "pullRequestNumber": "={{ $('Github Trigger').item.json.body.number }}",
+        "event": "comment",
+        "body": "Aprobado",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        -208
+      ],
+      "id": "7db80809-7eaf-468b-a3fb-50be8b056c65",
+      "name": "Create a review",
+      "webhookId": "f31fb8b1-9b2d-497c-b0bf-4aa7dbc66910",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "review",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.user.html_url }}",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.repo.html_url }}",
+          "mode": "url"
+        },
+        "pullRequestNumber": "={{ $('Github Trigger').item.json.body.number }}",
+        "event": "comment",
+        "body": "Desaprobado",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        -16
+      ],
+      "id": "dbcc3018-e608-42d9-84ad-c4dd80ee0744",
+      "name": "Create a review1",
+      "webhookId": "d296f32f-52a5-423b-9220-9c0ed22d170e",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Github Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a review1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "20332757-ac43-403c-a97b-eae14a470169",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "3TurxASsgllAlOZO",
+  "tags": []
+}

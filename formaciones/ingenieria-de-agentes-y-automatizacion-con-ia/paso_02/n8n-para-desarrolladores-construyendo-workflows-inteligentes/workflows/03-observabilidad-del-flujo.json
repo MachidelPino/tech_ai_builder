@@ -1,0 +1,1068 @@
+{
+  "name": "Clase 3",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "owner": {
+          "__rl": true,
+          "value": "MachidelPino",
+          "mode": "list",
+          "cachedResultName": "MachidelPino",
+          "cachedResultUrl": "https://github.com/MachidelPino"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "study-tracker-cli",
+          "mode": "list",
+          "cachedResultName": "study-tracker-cli",
+          "cachedResultUrl": "https://github.com/MachidelPino/study-tracker-cli"
+        },
+        "events": [
+          "pull_request"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "87e10a0e-941f-4552-b59e-5f2a02946d50",
+      "name": "Github Trigger",
+      "webhookId": "d4a15249-dcab-4b6f-8680-24a9abff8f7e",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "machidelpino@outlook.com",
+        "subject": "New Pull Request",
+        "message": "=From:  {{ $json.body.pull_request.user.html_url }}\nPull request: {{ $json.body.pull_request.url}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "2248c3b0-2e1a-4072-9f7c-25dcb8a208e4",
+      "name": "Send a message",
+      "webhookId": "53f223ca-1189-4450-be6d-f46feb241407",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2sLPJ1kbInpWRh2u",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHN4HCM0C",
+          "mode": "id"
+        },
+        "message": "=PR from:  {{ $('Github Trigger').item.json.body.pull_request.url }}\n\nautor: {{ $('Github Trigger').item.json.body.pull_request.user.login }}\n\nEsta aprobado??",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1120,
+        -112
+      ],
+      "id": "ba1dbc36-caa0-4084-bd73-cd11e6f07a0a",
+      "name": "Send message and wait for response",
+      "webhookId": "08775927-722a-4e87-9efb-e9ad52545e54",
+      "credentials": {
+        "slackApi": {
+          "id": "j1iiKafj1gLCFwJw",
+          "name": "Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "40c186fd-3718-4981-a23b-0fbae63de376",
+              "leftValue": "={{ $json.body.action }}",
+              "rightValue": "opened",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "98852234-f057-4544-a4c3-678078860383",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8d149703-7faf-40ef-8e7a-7697c3dc242f",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1344,
+        -112
+      ],
+      "id": "9a4e5f17-8c31-4537-8437-cc8b3f264523",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "review",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.user.html_url }}",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.repo.html_url }}",
+          "mode": "url"
+        },
+        "pullRequestNumber": "={{ $('Github Trigger').item.json.body.number }}",
+        "event": "comment",
+        "body": "Aprobado",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        -208
+      ],
+      "id": "8b203fad-ca57-4624-8d48-d79f97e611e5",
+      "name": "Create a review",
+      "webhookId": "f010ee3f-335f-439c-8a72-9ee3dda142cf",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "review",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.user.html_url }}",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.repo.html_url }}",
+          "mode": "url"
+        },
+        "pullRequestNumber": "={{ $('Github Trigger').item.json.body.number }}",
+        "event": "comment",
+        "body": "Desaprobado",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        -16
+      ],
+      "id": "ebb78573-8f2c-4bc4-91c9-c67c0b8461ba",
+      "name": "Create a review1",
+      "webhookId": "f010ee3f-335f-439c-8a72-9ee3dda142cf",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "mvfuuLfroItO8fDP",
+          "name": "GitHub OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "gLsV0zmDzIaGDwmF",
+          "mode": "list",
+          "cachedResultName": "DT1",
+          "cachedResultUrl": "/projects/dqbIjlNWQQMQZMyS/datatables/gLsV0zmDzIaGDwmF"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "owner": "={{ $json.body.pull_request.user.login }}",
+            "PR_link": "={{ $json.body.pull_request.url }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "owner",
+              "displayName": "owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PR_link",
+              "displayName": "PR_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Aprobado",
+              "displayName": "Aprobado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "finalizado",
+              "displayName": "finalizado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "4c6645b6-ed94-444f-8efb-f9484d966653",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "gLsV0zmDzIaGDwmF",
+          "mode": "list",
+          "cachedResultName": "DT1",
+          "cachedResultUrl": "/projects/dqbIjlNWQQMQZMyS/datatables/gLsV0zmDzIaGDwmF"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Insert row').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado": "={{ $('Send message and wait for response').item.json.data.approved }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "owner",
+              "displayName": "owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "PR_link",
+              "displayName": "PR_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Aprobado",
+              "displayName": "Aprobado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "finalizado",
+              "displayName": "finalizado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        -112
+      ],
+      "id": "75fd1313-9837-4077-8120-c2fc2507e747",
+      "name": "Update row(s)"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "exec_id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "155eeb4f-b7ae-4f26-bfda-5f064348af29",
+      "name": "Execution Data"
+    }
+  ],
+  "pinData": {
+    "Github Trigger": [
+      {
+        "json": {
+          "body": {
+            "action": "opened",
+            "number": 4,
+            "pull_request": {
+              "url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/4",
+              "id": 4061606065,
+              "node_id": "PR_kwDOSR46Hs7yFzCx",
+              "html_url": "https://github.com/MachidelPino/study-tracker-cli/pull/4",
+              "diff_url": "https://github.com/MachidelPino/study-tracker-cli/pull/4.diff",
+              "patch_url": "https://github.com/MachidelPino/study-tracker-cli/pull/4.patch",
+              "issue_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/4",
+              "number": 4,
+              "state": "open",
+              "locked": false,
+              "title": "Fix typo in help command message",
+              "user": {
+                "login": "MachidelPino",
+                "id": 143361264,
+                "node_id": "U_kgDOCIuE8A",
+                "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/MachidelPino",
+                "html_url": "https://github.com/MachidelPino",
+                "followers_url": "https://api.github.com/users/MachidelPino/followers",
+                "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+                "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+                "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+                "repos_url": "https://api.github.com/users/MachidelPino/repos",
+                "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+                "type": "User",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "body": null,
+              "created_at": "2026-07-15T15:19:22Z",
+              "updated_at": "2026-07-15T15:19:22Z",
+              "closed_at": null,
+              "merged_at": null,
+              "merge_commit_sha": null,
+              "assignees": [],
+              "requested_reviewers": [],
+              "requested_teams": [],
+              "labels": [],
+              "milestone": null,
+              "draft": false,
+              "commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/4/commits",
+              "review_comments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/4/comments",
+              "review_comment_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/comments{/number}",
+              "comments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/4/comments",
+              "statuses_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/statuses/a13b0194d67ffb4fd360a78d3956ec2bbc2a6a7a",
+              "head": {
+                "label": "MachidelPino:n8n4",
+                "ref": "n8n4",
+                "sha": "a13b0194d67ffb4fd360a78d3956ec2bbc2a6a7a",
+                "user": {
+                  "login": "MachidelPino",
+                  "id": 143361264,
+                  "node_id": "U_kgDOCIuE8A",
+                  "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+                  "gravatar_id": "",
+                  "url": "https://api.github.com/users/MachidelPino",
+                  "html_url": "https://github.com/MachidelPino",
+                  "followers_url": "https://api.github.com/users/MachidelPino/followers",
+                  "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+                  "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+                  "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+                  "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+                  "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+                  "repos_url": "https://api.github.com/users/MachidelPino/repos",
+                  "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+                  "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+                  "type": "User",
+                  "user_view_type": "public",
+                  "site_admin": false
+                },
+                "repo": {
+                  "id": 1226717726,
+                  "node_id": "R_kgDOSR46Hg",
+                  "name": "study-tracker-cli",
+                  "full_name": "MachidelPino/study-tracker-cli",
+                  "private": false,
+                  "owner": {
+                    "login": "MachidelPino",
+                    "id": 143361264,
+                    "node_id": "U_kgDOCIuE8A",
+                    "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/MachidelPino",
+                    "html_url": "https://github.com/MachidelPino",
+                    "followers_url": "https://api.github.com/users/MachidelPino/followers",
+                    "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+                    "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+                    "repos_url": "https://api.github.com/users/MachidelPino/repos",
+                    "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+                    "type": "User",
+                    "user_view_type": "public",
+                    "site_admin": false
+                  },
+                  "html_url": "https://github.com/MachidelPino/study-tracker-cli",
+                  "description": "A simple Python CLI to track study sessions, tasks and weekly target hours.",
+                  "fork": false,
+                  "url": "https://api.github.com/repos/MachidelPino/study-tracker-cli",
+                  "forks_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/forks",
+                  "keys_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/keys{/key_id}",
+                  "collaborators_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/collaborators{/collaborator}",
+                  "teams_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/teams",
+                  "hooks_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/hooks",
+                  "issue_events_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/events{/number}",
+                  "events_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/events",
+                  "assignees_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/assignees{/user}",
+                  "branches_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/branches{/branch}",
+                  "tags_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/tags",
+                  "blobs_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/blobs{/sha}",
+                  "git_tags_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/tags{/sha}",
+                  "git_refs_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/refs{/sha}",
+                  "trees_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/trees{/sha}",
+                  "statuses_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/statuses/{sha}",
+                  "languages_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/languages",
+                  "stargazers_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/stargazers",
+                  "contributors_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/contributors",
+                  "subscribers_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/subscribers",
+                  "subscription_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/subscription",
+                  "commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/commits{/sha}",
+                  "git_commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/commits{/sha}",
+                  "comments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/comments{/number}",
+                  "issue_comment_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/comments{/number}",
+                  "contents_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/contents/{+path}",
+                  "compare_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/compare/{base}...{head}",
+                  "merges_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/merges",
+                  "archive_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/{archive_format}{/ref}",
+                  "downloads_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/downloads",
+                  "issues_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues{/number}",
+                  "pulls_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls{/number}",
+                  "milestones_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/milestones{/number}",
+                  "notifications_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/notifications{?since,all,participating}",
+                  "labels_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/labels{/name}",
+                  "releases_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/releases{/id}",
+                  "deployments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/deployments",
+                  "created_at": "2026-05-01T18:47:36Z",
+                  "updated_at": "2026-06-30T01:14:36Z",
+                  "pushed_at": "2026-07-15T15:19:18Z",
+                  "git_url": "git://github.com/MachidelPino/study-tracker-cli.git",
+                  "ssh_url": "git@github.com:MachidelPino/study-tracker-cli.git",
+                  "clone_url": "https://github.com/MachidelPino/study-tracker-cli.git",
+                  "svn_url": "https://github.com/MachidelPino/study-tracker-cli",
+                  "homepage": null,
+                  "size": 6,
+                  "stargazers_count": 0,
+                  "watchers_count": 0,
+                  "language": "Python",
+                  "has_issues": true,
+                  "has_projects": true,
+                  "has_downloads": true,
+                  "has_wiki": true,
+                  "has_pages": false,
+                  "has_discussions": false,
+                  "forks_count": 0,
+                  "mirror_url": null,
+                  "archived": false,
+                  "disabled": false,
+                  "open_issues_count": 4,
+                  "license": null,
+                  "allow_forking": true,
+                  "is_template": false,
+                  "web_commit_signoff_required": false,
+                  "has_pull_requests": true,
+                  "pull_request_creation_policy": "all",
+                  "topics": [],
+                  "visibility": "public",
+                  "forks": 0,
+                  "open_issues": 4,
+                  "watchers": 0,
+                  "default_branch": "main",
+                  "allow_squash_merge": true,
+                  "allow_merge_commit": true,
+                  "allow_rebase_merge": true,
+                  "allow_auto_merge": false,
+                  "delete_branch_on_merge": false,
+                  "allow_update_branch": false,
+                  "use_squash_pr_title_as_default": false,
+                  "squash_merge_commit_message": "COMMIT_MESSAGES",
+                  "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+                  "merge_commit_message": "PR_TITLE",
+                  "merge_commit_title": "MERGE_MESSAGE"
+                }
+              },
+              "base": {
+                "label": "MachidelPino:main",
+                "ref": "main",
+                "sha": "6a998bfcfd108a32028b3a29df1536d2f1534d18",
+                "user": {
+                  "login": "MachidelPino",
+                  "id": 143361264,
+                  "node_id": "U_kgDOCIuE8A",
+                  "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+                  "gravatar_id": "",
+                  "url": "https://api.github.com/users/MachidelPino",
+                  "html_url": "https://github.com/MachidelPino",
+                  "followers_url": "https://api.github.com/users/MachidelPino/followers",
+                  "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+                  "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+                  "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+                  "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+                  "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+                  "repos_url": "https://api.github.com/users/MachidelPino/repos",
+                  "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+                  "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+                  "type": "User",
+                  "user_view_type": "public",
+                  "site_admin": false
+                },
+                "repo": {
+                  "id": 1226717726,
+                  "node_id": "R_kgDOSR46Hg",
+                  "name": "study-tracker-cli",
+                  "full_name": "MachidelPino/study-tracker-cli",
+                  "private": false,
+                  "owner": {
+                    "login": "MachidelPino",
+                    "id": 143361264,
+                    "node_id": "U_kgDOCIuE8A",
+                    "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/MachidelPino",
+                    "html_url": "https://github.com/MachidelPino",
+                    "followers_url": "https://api.github.com/users/MachidelPino/followers",
+                    "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+                    "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+                    "repos_url": "https://api.github.com/users/MachidelPino/repos",
+                    "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+                    "type": "User",
+                    "user_view_type": "public",
+                    "site_admin": false
+                  },
+                  "html_url": "https://github.com/MachidelPino/study-tracker-cli",
+                  "description": "A simple Python CLI to track study sessions, tasks and weekly target hours.",
+                  "fork": false,
+                  "url": "https://api.github.com/repos/MachidelPino/study-tracker-cli",
+                  "forks_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/forks",
+                  "keys_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/keys{/key_id}",
+                  "collaborators_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/collaborators{/collaborator}",
+                  "teams_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/teams",
+                  "hooks_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/hooks",
+                  "issue_events_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/events{/number}",
+                  "events_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/events",
+                  "assignees_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/assignees{/user}",
+                  "branches_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/branches{/branch}",
+                  "tags_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/tags",
+                  "blobs_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/blobs{/sha}",
+                  "git_tags_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/tags{/sha}",
+                  "git_refs_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/refs{/sha}",
+                  "trees_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/trees{/sha}",
+                  "statuses_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/statuses/{sha}",
+                  "languages_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/languages",
+                  "stargazers_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/stargazers",
+                  "contributors_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/contributors",
+                  "subscribers_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/subscribers",
+                  "subscription_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/subscription",
+                  "commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/commits{/sha}",
+                  "git_commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/commits{/sha}",
+                  "comments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/comments{/number}",
+                  "issue_comment_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/comments{/number}",
+                  "contents_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/contents/{+path}",
+                  "compare_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/compare/{base}...{head}",
+                  "merges_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/merges",
+                  "archive_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/{archive_format}{/ref}",
+                  "downloads_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/downloads",
+                  "issues_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues{/number}",
+                  "pulls_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls{/number}",
+                  "milestones_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/milestones{/number}",
+                  "notifications_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/notifications{?since,all,participating}",
+                  "labels_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/labels{/name}",
+                  "releases_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/releases{/id}",
+                  "deployments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/deployments",
+                  "created_at": "2026-05-01T18:47:36Z",
+                  "updated_at": "2026-06-30T01:14:36Z",
+                  "pushed_at": "2026-07-15T15:19:18Z",
+                  "git_url": "git://github.com/MachidelPino/study-tracker-cli.git",
+                  "ssh_url": "git@github.com:MachidelPino/study-tracker-cli.git",
+                  "clone_url": "https://github.com/MachidelPino/study-tracker-cli.git",
+                  "svn_url": "https://github.com/MachidelPino/study-tracker-cli",
+                  "homepage": null,
+                  "size": 6,
+                  "stargazers_count": 0,
+                  "watchers_count": 0,
+                  "language": "Python",
+                  "has_issues": true,
+                  "has_projects": true,
+                  "has_downloads": true,
+                  "has_wiki": true,
+                  "has_pages": false,
+                  "has_discussions": false,
+                  "forks_count": 0,
+                  "mirror_url": null,
+                  "archived": false,
+                  "disabled": false,
+                  "open_issues_count": 4,
+                  "license": null,
+                  "allow_forking": true,
+                  "is_template": false,
+                  "web_commit_signoff_required": false,
+                  "has_pull_requests": true,
+                  "pull_request_creation_policy": "all",
+                  "topics": [],
+                  "visibility": "public",
+                  "forks": 0,
+                  "open_issues": 4,
+                  "watchers": 0,
+                  "default_branch": "main",
+                  "allow_squash_merge": true,
+                  "allow_merge_commit": true,
+                  "allow_rebase_merge": true,
+                  "allow_auto_merge": false,
+                  "delete_branch_on_merge": false,
+                  "allow_update_branch": false,
+                  "use_squash_pr_title_as_default": false,
+                  "squash_merge_commit_message": "COMMIT_MESSAGES",
+                  "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+                  "merge_commit_message": "PR_TITLE",
+                  "merge_commit_title": "MERGE_MESSAGE"
+                }
+              },
+              "_links": {
+                "self": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/4"
+                },
+                "html": {
+                  "href": "https://github.com/MachidelPino/study-tracker-cli/pull/4"
+                },
+                "issue": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/4"
+                },
+                "comments": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/4/comments"
+                },
+                "review_comments": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/4/comments"
+                },
+                "review_comment": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/comments{/number}"
+                },
+                "commits": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls/4/commits"
+                },
+                "statuses": {
+                  "href": "https://api.github.com/repos/MachidelPino/study-tracker-cli/statuses/a13b0194d67ffb4fd360a78d3956ec2bbc2a6a7a"
+                }
+              },
+              "author_association": "OWNER",
+              "auto_merge": null,
+              "assignee": null,
+              "active_lock_reason": null,
+              "merged": false,
+              "mergeable": null,
+              "rebaseable": null,
+              "mergeable_state": "unknown",
+              "merged_by": null,
+              "comments": 0,
+              "review_comments": 0,
+              "maintainer_can_modify": false,
+              "commits": 1,
+              "additions": 1,
+              "deletions": 1,
+              "changed_files": 1
+            },
+            "repository": {
+              "id": 1226717726,
+              "node_id": "R_kgDOSR46Hg",
+              "name": "study-tracker-cli",
+              "full_name": "MachidelPino/study-tracker-cli",
+              "private": false,
+              "owner": {
+                "login": "MachidelPino",
+                "id": 143361264,
+                "node_id": "U_kgDOCIuE8A",
+                "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/MachidelPino",
+                "html_url": "https://github.com/MachidelPino",
+                "followers_url": "https://api.github.com/users/MachidelPino/followers",
+                "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+                "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+                "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+                "repos_url": "https://api.github.com/users/MachidelPino/repos",
+                "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+                "type": "User",
+                "user_view_type": "public",
+                "site_admin": false
+              },
+              "html_url": "https://github.com/MachidelPino/study-tracker-cli",
+              "description": "A simple Python CLI to track study sessions, tasks and weekly target hours.",
+              "fork": false,
+              "url": "https://api.github.com/repos/MachidelPino/study-tracker-cli",
+              "forks_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/forks",
+              "keys_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/keys{/key_id}",
+              "collaborators_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/collaborators{/collaborator}",
+              "teams_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/teams",
+              "hooks_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/hooks",
+              "issue_events_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/events{/number}",
+              "events_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/events",
+              "assignees_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/assignees{/user}",
+              "branches_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/branches{/branch}",
+              "tags_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/tags",
+              "blobs_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/blobs{/sha}",
+              "git_tags_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/tags{/sha}",
+              "git_refs_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/refs{/sha}",
+              "trees_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/trees{/sha}",
+              "statuses_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/statuses/{sha}",
+              "languages_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/languages",
+              "stargazers_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/stargazers",
+              "contributors_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/contributors",
+              "subscribers_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/subscribers",
+              "subscription_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/subscription",
+              "commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/commits{/sha}",
+              "git_commits_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/git/commits{/sha}",
+              "comments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/comments{/number}",
+              "issue_comment_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues/comments{/number}",
+              "contents_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/contents/{+path}",
+              "compare_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/compare/{base}...{head}",
+              "merges_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/merges",
+              "archive_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/{archive_format}{/ref}",
+              "downloads_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/downloads",
+              "issues_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/issues{/number}",
+              "pulls_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/pulls{/number}",
+              "milestones_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/milestones{/number}",
+              "notifications_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/notifications{?since,all,participating}",
+              "labels_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/labels{/name}",
+              "releases_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/releases{/id}",
+              "deployments_url": "https://api.github.com/repos/MachidelPino/study-tracker-cli/deployments",
+              "created_at": "2026-05-01T18:47:36Z",
+              "updated_at": "2026-06-30T01:14:36Z",
+              "pushed_at": "2026-07-15T15:19:18Z",
+              "git_url": "git://github.com/MachidelPino/study-tracker-cli.git",
+              "ssh_url": "git@github.com:MachidelPino/study-tracker-cli.git",
+              "clone_url": "https://github.com/MachidelPino/study-tracker-cli.git",
+              "svn_url": "https://github.com/MachidelPino/study-tracker-cli",
+              "homepage": null,
+              "size": 6,
+              "stargazers_count": 0,
+              "watchers_count": 0,
+              "language": "Python",
+              "has_issues": true,
+              "has_projects": true,
+              "has_downloads": true,
+              "has_wiki": true,
+              "has_pages": false,
+              "has_discussions": false,
+              "forks_count": 0,
+              "mirror_url": null,
+              "archived": false,
+              "disabled": false,
+              "open_issues_count": 4,
+              "license": null,
+              "allow_forking": true,
+              "is_template": false,
+              "web_commit_signoff_required": false,
+              "has_pull_requests": true,
+              "pull_request_creation_policy": "all",
+              "topics": [],
+              "visibility": "public",
+              "forks": 0,
+              "open_issues": 4,
+              "watchers": 0,
+              "default_branch": "main"
+            },
+            "sender": {
+              "login": "MachidelPino",
+              "id": 143361264,
+              "node_id": "U_kgDOCIuE8A",
+              "avatar_url": "https://avatars.githubusercontent.com/u/143361264?v=4",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/MachidelPino",
+              "html_url": "https://github.com/MachidelPino",
+              "followers_url": "https://api.github.com/users/MachidelPino/followers",
+              "following_url": "https://api.github.com/users/MachidelPino/following{/other_user}",
+              "gists_url": "https://api.github.com/users/MachidelPino/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/MachidelPino/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/MachidelPino/subscriptions",
+              "organizations_url": "https://api.github.com/users/MachidelPino/orgs",
+              "repos_url": "https://api.github.com/users/MachidelPino/repos",
+              "events_url": "https://api.github.com/users/MachidelPino/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/MachidelPino/received_events",
+              "type": "User",
+              "user_view_type": "public",
+              "site_admin": false
+            }
+          },
+          "headers": {
+            "host": "machi1712.app.n8n.cloud",
+            "user-agent": "GitHub-Hookshot/beae857",
+            "content-length": "24104",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "140.82.115.98",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "a1b9becbcd55398c-IAD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "140.82.115.98, 172.68.138.160",
+            "x-forwarded-host": "machi1712.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-swc-25-667d977865-s6stv",
+            "x-github-delivery": "8f944270-8060-11f1-88bd-b394bf57c0ad",
+            "x-github-event": "pull_request",
+            "x-github-hook-id": "653086077",
+            "x-github-hook-installation-target-id": "1226717726",
+            "x-github-hook-installation-target-type": "repository",
+            "x-hub-signature": "sha1=3d13b891d4fbad57d0060751c510ab0d0ac0eb3c",
+            "x-hub-signature-256": "sha256=862b137bc40766a7efbf54c77f6bc0af169fdd69f8736b84249a667eac98a68b",
+            "x-is-trusted": "yes",
+            "x-real-ip": "140.82.115.98"
+          },
+          "query": {}
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Github Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a review1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a review": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a review1": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "96b568b5-8031-4638-86f7-04fa0dbc48ba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9500868592de84fb4d1592cb69852d0839858b2bdb43b49b1b9d4615a91ee29"
+  },
+  "nodeGroups": [],
+  "id": "c5zDqRG7kQmlyf1y",
+  "tags": []
+}

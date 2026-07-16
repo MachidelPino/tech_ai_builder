@@ -87,8 +87,8 @@ También se explora el uso de Inteligencia Artificial dentro de las automatizaci
 | Curso                                                         |    Estado | Certificado |
 | ------------------------------------------------------------- | --------: | ----------- |
 | N8N: Crea automatizaciones inteligentes                       | Completado | Obtenido   |
-| Automatización de Flujos: integrando n8n e IA                 | Pendiente | Pendiente   |
-| n8n para desarrolladores: Construyendo workflows inteligentes | Pendiente | Pendiente   |
+| Automatización de Flujos: integrando n8n e IA                 | Completado | Obtenido   |
+| n8n para desarrolladores: Construyendo workflows inteligentes | Completado | Obtenido   |
 
 ## Contenidos principales
 
@@ -141,4 +141,4 @@ Los certificados se guardarán dentro de la carpeta de cada curso correspondient
 
 ## Estado
 
-Formación pendiente.
+Formación finalizada.

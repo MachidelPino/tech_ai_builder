@@ -10,8 +10,8 @@ Curso de la formación **Oracle Cloud Infrastructure** de **ONE AI for Tech**, o
 - **Plataforma:** Alura
 - **Carga horaria:** 8 horas
 - **Cantidad de aulas:** 5
-- **Estado:** No iniciado
-- **Certificado:** Pendiente
+- **Estado:** Finalizado
+- **Certificado:** Obtenido
 
 ## Objetivo del curso
 
@@ -21,11 +21,11 @@ Aprender a configurar una infraestructura inicial en Oracle Cloud Infrastructure
 
 | Aula | Tema | Duración | Estado |
 |---|---|---:|---|
-| 01 | Computación en la nube | 13 min | Pendiente |
-| 02 | Cuenta Free Tier OCI | 26 min | Pendiente |
-| 03 | Arquitectura OCI | 40 min | Pendiente |
-| 04 | Redes | 18 min | Pendiente |
-| 05 | Compute | 49 min | Pendiente |
+| 01 | Computación en la nube | 13 min | Completado |
+| 02 | Cuenta Free Tier OCI | 26 min | Completado |
+| 03 | Arquitectura OCI | 40 min | Completado |
+| 04 | Redes | 18 min | Completado |
+| 05 | Compute | 49 min | Completado |
 
 ## Detalle de aulas
 
@@ -147,12 +147,10 @@ El certificado se almacenará en:
 certificado/
 ```
 
-**Estado:** Pendiente.
+**Estado:** Obtenido.
 
 ## Estado actual
 
-- **Curso:** No iniciado
-- **Aulas completadas:** 0 de 5
-- **Resumen:** Pendiente
-- **Prácticas:** Pendientes
-- **Certificado:** Pendiente
+- **Curso:** Finalizado
+- **Aulas completadas:** 5 de 5
+- **Certificado:** Obtenido

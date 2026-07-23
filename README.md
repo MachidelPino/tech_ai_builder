@@ -62,6 +62,12 @@ Cuando corresponda, se incluyen referencias a artículos, documentación públic
 
 ## Estado general
 
-Programa en curso.
+Programa finalizado.
 
 La documentación se irá incorporando progresivamente a medida que avance en las distintas formaciones y cursos.
+
+## Challenge
+
+El programa finaliza con un challenge que se basa en la creación y deploy de un agente. Este proyecto se encuentra en un repositorio especifico.
+
+Link: [https://github.com/MachidelPino/del-pino-knowledge-agent]()
